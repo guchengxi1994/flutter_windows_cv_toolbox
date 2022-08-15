@@ -1,7 +1,7 @@
 // modified from https://www.cnblogs.com/PikapBai/p/15875524.html
 
-#ifndef CVUTIL_H
-#define CVUTIL_H
+#ifndef BLINDWATERMARK_H
+#define BLINDWATERMARK_H
 
 #include <stdlib.h>
 #include <string>
@@ -44,4 +44,4 @@ BlindWatermark::~BlindWatermark()
 {
 }
 
-#endif // CVUTIL_H
+#endif // BLINDWATERMARK_H
