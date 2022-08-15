@@ -1,4 +1,4 @@
-# include "cv_util.h"
+# include "blind_watermark.h"
 
 /*
  * 功能：
@@ -10,7 +10,7 @@
  * 注意：
  *      该函数会导致生成的图像右边和下边有黑边，因为边界用 0 填充了
  */
-cv::Mat CvUtil::optimizeImageDim(cv::Mat image) 
+cv::Mat BlindWatermark::optimizeImageDim(cv::Mat image) 
 {
 // 因为不想要黑边使图片好看，所以注释了
 # if 0
@@ -40,7 +40,7 @@ cv::Mat CvUtil::optimizeImageDim(cv::Mat image)
  * 返回值：
  *      cv::Mat：B 通道的图像
  */ 
-cv::Mat CvUtil::splitSrc(cv::Mat image) 
+cv::Mat BlindWatermark::splitSrc(cv::Mat image) 
 {
     // 清空 allPlanes
     if (!this->allPlanes.empty()) {
@@ -81,7 +81,7 @@ cv::Mat CvUtil::splitSrc(cv::Mat image)
  * 说明：
  *      对 complexImage 进行操作
  */ 
-void CvUtil::addImageWatermarkWithText(cv::Mat image, string watermarkText)
+void BlindWatermark::addImageWatermarkWithText(cv::Mat image, string watermarkText)
 {
     if (!this->planes.empty()) {
         this->planes.clear();
@@ -121,7 +121,7 @@ void CvUtil::addImageWatermarkWithText(cv::Mat image, string watermarkText)
  * 说明：
  *      对 this->complexImage 进行操作
  */
-void CvUtil::getImageWatermarkWithText(cv::Mat image) 
+void BlindWatermark::getImageWatermarkWithText(cv::Mat image) 
 {
     // planes 数组中存的通道数若开始不为空，需清空.
     if (!this->planes.empty()) {
@@ -154,7 +154,7 @@ void CvUtil::getImageWatermarkWithText(cv::Mat image)
  * 返回值：
  *      无
  */
-void CvUtil::shiftDFT(cv::Mat &magnitudeImage) 
+void BlindWatermark::shiftDFT(cv::Mat &magnitudeImage) 
 {
     // 如果图像的尺寸是奇数的话对图像进行裁剪并重新排列（减去补充部分）
     magnitudeImage = magnitudeImage(cv::Rect(0, 0, magnitudeImage.cols & -2, magnitudeImage.rows & -2));
@@ -190,7 +190,7 @@ void CvUtil::shiftDFT(cv::Mat &magnitudeImage)
  * 返回值：
  *      cv::Mat：转化的频域图
  */
-cv::Mat CvUtil::createOptimizedMagnitude(cv::Mat complexImage1) 
+cv::Mat BlindWatermark::createOptimizedMagnitude(cv::Mat complexImage1) 
 {
     vector<cv::Mat> newPlanes;
 
@@ -226,7 +226,7 @@ cv::Mat CvUtil::createOptimizedMagnitude(cv::Mat complexImage1)
  * 返回值：
  *      cv::Mat：空间域的图像
  */ 
-cv::Mat CvUtil::antitransformImage(cv::Mat complexImage1) 
+cv::Mat BlindWatermark::antitransformImage(cv::Mat complexImage1) 
 {
     cv::Mat invDFT = cv::Mat();
     cv::idft(complexImage1, invDFT, cv::DFT_SCALE | cv::DFT_REAL_OUTPUT, 0);
@@ -245,13 +245,13 @@ cv::Mat CvUtil::antitransformImage(cv::Mat complexImage1)
     return lastImage;
 }
 
-void CvUtil::enc(char* filename)
+char* BlindWatermark::enc(char* filename, char* watermarkText)
 {
     // 读取图片 
     cv::Mat img1 = cv::imread(filename, cv::IMREAD_COLOR);
 
     // 加水印
-    addImageWatermarkWithText(img1, "IO ,the best engineer");
+    addImageWatermarkWithText(img1, watermarkText);
 
     cv::Mat img2 = createOptimizedMagnitude(this->complexImage);
     cv::imwrite("enc_img2.png", img2);
@@ -259,9 +259,10 @@ void CvUtil::enc(char* filename)
     // 注意该反傅里叶变换的图，需要用 .png 格式保存，如果用 jpg 会导致水印文字丢失
     cv::Mat img3 = antitransformImage(this->complexImage);
     cv::imwrite("enc_img3.png", img3);
+    return "enc_img3.png";
 }
 
-void CvUtil::dec(char* filename)
+char* BlindWatermark::dec(char* filename)
 {
     // 读取图片 
     cv::Mat img1 = cv::imread(filename, cv::IMREAD_COLOR);
@@ -274,4 +275,5 @@ void CvUtil::dec(char* filename)
 
     cv::Mat img3 = antitransformImage(this->complexImage);
     cv::imwrite("dec_img3.png", img3);
+    return "dec_img2.png";
 }

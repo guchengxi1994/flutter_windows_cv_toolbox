@@ -6,11 +6,11 @@ import 'dart:isolate';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:opencv_tools/model.dart';
 
-import 'native_opencv.dart';
+const title = ' OpenCV Tools Example';
 
-const title = 'Native OpenCV Example';
-
+@Deprecated("this is just a demo, use `opencv_tools` instead")
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void showVersion() {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final snackbar = SnackBar(
-      content: Text('OpenCV version: ${opencvVersion()}'),
+      content: Text('OpenCV version: ${OpencvTools.getOpencvVersion()}'),
     );
 
     scaffoldMessenger
@@ -62,45 +62,6 @@ class _MyHomePageState extends State<MyHomePage> {
         allowedExtensions: ["jpg", "png"]).then((v) => v?.files.first.path);
   }
 
-  Future<void> takeImageAndProcess() async {
-    imagePath = await pickAnImage();
-
-    if (imagePath == null) {
-      return;
-    }
-
-    setState(() {
-      _isWorking = true;
-    });
-
-    // Creating a port for communication with isolate and arguments for entry point
-    final port = ReceivePort();
-    final args =
-        ProcessImageArguments(imagePath!, "${Directory.current.path}/temp.jpg");
-    debugPrint("${Directory.current.path}/temp.jpg");
-    // Spawning an isolate
-    Isolate.spawn<ProcessImageArguments>(
-      processImage,
-      args,
-      onError: port.sendPort,
-      onExit: port.sendPort,
-    );
-
-    // Making a variable to store a subscription in
-    late StreamSubscription sub;
-
-    // Listening for messages on port
-    sub = port.listen((_) async {
-      // Cancel a subscription after message received called
-      await sub.cancel();
-
-      setState(() {
-        _isProcessed = true;
-        _isWorking = false;
-      });
-    });
-  }
-
   Future<void> blindWatermark() async {
     imagePath = await pickAnImage();
 
@@ -111,12 +72,14 @@ class _MyHomePageState extends State<MyHomePage> {
       _isWorking = true;
     });
 
+    final args =
+        BlindWatermarkModel(imgPath: imagePath!, message: "IO, the best");
+
     // Creating a port for communication with isolate and arguments for entry point
     final port = ReceivePort();
-    final args = BlindwatermarkArguments(imagePath!);
     // Spawning an isolate
-    Isolate.spawn<BlindwatermarkArguments>(
-      blindWaterMarkEncode,
+    Isolate.spawn<BlindWatermarkModel>(
+      OpencvTools.addBlindWatermarkToImage,
       args,
       onError: port.sendPort,
       onExit: port.sendPort,
@@ -149,10 +112,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // Creating a port for communication with isolate and arguments for entry point
     final port = ReceivePort();
-    final args = BlindwatermarkArguments(imagePath!);
+    final args = BlindWatermarkModel(imgPath: imagePath!, message: "");
     // Spawning an isolate
-    Isolate.spawn<BlindwatermarkArguments>(
-      getBlindWaterMarkEncode,
+    Isolate.spawn<BlindWatermarkModel>(
+      OpencvTools.getBlindWatermark,
       args,
       onError: port.sendPort,
       onExit: port.sendPort,
@@ -203,25 +166,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 20,
                     ),
                     ElevatedButton(
-                      onPressed: takeImageAndProcess,
-                      child: const Text('Process photo'),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ElevatedButton(
                       onPressed: blindWatermark,
-                      child: const Text('Blind watermark'),
+                      child: const Text('Add Blind watermark'),
                     ),
                     const SizedBox(
                       height: 20,
                     ),
                     ElevatedButton(
                       onPressed: getBlindWatermark,
-                      child: const Text('De blind watermark'),
-                    ),
-                    const SizedBox(
-                      height: 20,
+                      child: const Text('Get blind watermark'),
                     ),
                   ],
                 )

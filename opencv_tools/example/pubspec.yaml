@@ -1,4 +1,4 @@
-name: opencv_windows_example
+name: opencv_tools_example
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -34,9 +34,8 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  native_opencv_windows:
+  opencv_tools:
     path: ../
-  ffi: ^2.0.1
   file_picker: ^5.0.1
 
 dev_dependencies:

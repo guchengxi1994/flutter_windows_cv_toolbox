@@ -1,4 +1,4 @@
-# opencv_windows_example
+# opencv_tools_example
 
 A new Flutter project.
 

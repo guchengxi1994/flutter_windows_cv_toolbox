@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "opencv_windows_example" "\0"
+            VALUE "FileDescription", "opencv_tools_example" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "opencv_windows_example" "\0"
+            VALUE "InternalName", "opencv_tools_example" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2022 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "opencv_windows_example.exe" "\0"
-            VALUE "ProductName", "opencv_windows_example" "\0"
+            VALUE "OriginalFilename", "opencv_tools_example.exe" "\0"
+            VALUE "ProductName", "opencv_tools_example" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

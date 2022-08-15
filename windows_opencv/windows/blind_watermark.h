@@ -12,7 +12,7 @@
 using namespace std;
 
 
-class CvUtil
+class BlindWatermark
 {
 private:
     cv::Mat complexImage;
@@ -30,17 +30,17 @@ private:
     cv::Mat antitransformImage(cv::Mat complexImage);
 
 public:
-    void enc(char* filename);
-    void dec(char* filename);
-    CvUtil(/* args */);
-    ~CvUtil();
+    char* enc(char* filename,char* watermarkText);
+    char* dec(char* filename);
+    BlindWatermark(/* args */);
+    ~BlindWatermark();
 };
 
-CvUtil::CvUtil(/* args */)
+BlindWatermark::BlindWatermark(/* args */)
 {
 }
 
-CvUtil::~CvUtil()
+BlindWatermark::~BlindWatermark()
 {
 }
 

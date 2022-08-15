@@ -23,7 +23,7 @@
 #endif
 
 // blind watermark
-#include "cv_util.cpp"
+#include "blind_watermark.cpp"
 
 using namespace cv;
 using namespace std;
@@ -81,14 +81,14 @@ extern "C" {
     }
 
     FUNCTION_ATTRIBUTE
-    void blind_watermark_encode(char* inputImagePath){
-        CvUtil cvUtil;
-        cvUtil.enc(inputImagePath);
+    char* blind_watermark_encode(char* inputImagePath, char* message){
+        BlindWatermark blindWatermark;
+        return blindWatermark.enc(inputImagePath,message);
     }
 
     FUNCTION_ATTRIBUTE
-    void blind_watermark_decode(char* inputImagePath){
-        CvUtil cvUtil;
-        cvUtil.dec(inputImagePath);
+    char* blind_watermark_decode(char* inputImagePath){
+        BlindWatermark blindWatermark;
+        return blindWatermark.dec(inputImagePath);
     }
 }
