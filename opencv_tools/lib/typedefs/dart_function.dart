@@ -15,3 +15,6 @@ typedef AddBlindWaterMarkFunc = ffi.Pointer<Utf8> Function(
 /// get a blind watermark from image
 /// input1 : file path pointer,
 typedef GetBlindWaterMarkFunc = ffi.Pointer<Utf8> Function(ffi.Pointer<Utf8>);
+
+/// convet color
+typedef ConvertColorFunc = ffi.Pointer<Utf8> Function(ffi.Pointer<Utf8>, int);

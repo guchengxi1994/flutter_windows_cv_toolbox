@@ -23,7 +23,9 @@
 #endif
 
 // blind watermark
-#include "blind_watermark.cpp"
+#include "tools/blind_watermark/blind_watermark.cpp"
+// convert color
+#include "tools/cvt_color/cvt_color.cpp"
 
 using namespace cv;
 using namespace std;
@@ -90,5 +92,11 @@ extern "C" {
     char* blind_watermark_decode(char* inputImagePath){
         BlindWatermark blindWatermark;
         return blindWatermark.dec(inputImagePath);
+    }
+
+    FUNCTION_ATTRIBUTE
+    char* convert_color(char* inputImagePath,int cvtType){
+        CvtColor cvt;
+        return cvt.cvtColor(inputImagePath,cvtType);
     }
 }

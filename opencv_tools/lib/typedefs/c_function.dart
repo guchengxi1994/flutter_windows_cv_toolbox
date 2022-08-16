@@ -15,3 +15,7 @@ typedef CAddBlindWaterMarkFunc = ffi.Pointer<Utf8> Function(
 /// get a blind watermark from image
 /// input1 : file path pointer,
 typedef CGetBlindWaterMarkFunc = ffi.Pointer<Utf8> Function(ffi.Pointer<Utf8>);
+
+/// convert color
+typedef CConvertColorFunc = ffi.Pointer<Utf8> Function(
+    ffi.Pointer<Utf8>, ffi.Int);

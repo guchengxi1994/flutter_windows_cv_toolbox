@@ -1,4 +1,4 @@
-# include "blind_watermark.h"
+#include "blind_watermark.h"
 
 /*
  * 功能：

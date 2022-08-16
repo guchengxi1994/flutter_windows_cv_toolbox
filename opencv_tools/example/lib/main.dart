@@ -1,16 +1,16 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, avoid_init_to_null
 
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:opencv_tools/model.dart';
+import 'package:opencv_tools/tools.dart';
 
 const title = ' OpenCV Tools Example';
 
-@Deprecated("this is just a demo, use `opencv_tools` instead")
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -42,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isProcessed = false;
   bool _isWorking = false;
   late String? imagePath = "";
+  late Uint8List? result = null;
 
   void showVersion() {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -136,6 +137,43 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future<void> cvtColor() async {
+    imagePath = await pickAnImage();
+
+    if (imagePath == null) {
+      return;
+    }
+    setState(() {
+      _isWorking = true;
+    });
+
+    // Creating a port for communication with isolate and arguments for entry point
+    final port = ReceivePort();
+    final args = ConvertColorModel(
+        imgPath: imagePath!, cvtType: CvtColor.RGB2HLSFULL /* or 69 */);
+    // Spawning an isolate
+    Isolate.spawn<ConvertColorModel>(
+      OpencvTools.convertColor,
+      args,
+      onError: port.sendPort,
+      onExit: port.sendPort,
+    );
+
+    // Making a variable to store a subscription in
+    late StreamSubscription sub;
+
+    // Listening for messages on port
+    sub = port.listen((_) async {
+      // Cancel a subscription after message received called
+      await sub.cancel();
+
+      setState(() {
+        _isProcessed = true;
+        _isWorking = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -176,6 +214,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: getBlindWatermark,
                       child: const Text('Get blind watermark'),
                     ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                      onPressed: cvtColor,
+                      child: const Text('Convert color'),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
                   ],
                 )
               ],
@@ -188,6 +236,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: const Center(
                   child: CircularProgressIndicator(),
                 ),
+              ),
+            ),
+          if (result != null)
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 3000, maxHeight: 300),
+              child: Image.memory(
+                result!,
+                alignment: Alignment.center,
               ),
             ),
         ],
