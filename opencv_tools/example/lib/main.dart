@@ -174,6 +174,49 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future<void> yolov3() async {
+    imagePath = await pickAnImage();
+
+    if (imagePath == null) {
+      return;
+    }
+    setState(() {
+      _isWorking = true;
+    });
+
+    // Creating a port for communication with isolate and arguments for entry point
+    final port = ReceivePort();
+    final args = Yolov3Model(
+        cfgFilePath:
+            'D:\\github_repo\\flutter_windows_opencv\\windows_opencv\\nn_models\\yolov3.cfg',
+        coconamePath:
+            'D:\\github_repo\\flutter_windows_opencv\\windows_opencv\\nn_models\\coco_names.txt',
+        inputImagePath: imagePath!,
+        modelPath:
+            'D:\\github_repo\\flutter_windows_opencv\\windows_opencv\\nn_models\\yolov3.weights');
+    // Spawning an isolate
+    Isolate.spawn<Yolov3Model>(
+      OpencvTools.yolov3Detection,
+      args,
+      onError: port.sendPort,
+      onExit: port.sendPort,
+    );
+
+    // Making a variable to store a subscription in
+    late StreamSubscription sub;
+
+    // Listening for messages on port
+    sub = port.listen((_) async {
+      // Cancel a subscription after message received called
+      await sub.cancel();
+
+      setState(() {
+        _isProcessed = true;
+        _isWorking = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -223,6 +266,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     const SizedBox(
                       height: 20,
+                    ),
+                    ElevatedButton(
+                      onPressed: yolov3,
+                      child: const Text('yolov3'),
                     ),
                   ],
                 )

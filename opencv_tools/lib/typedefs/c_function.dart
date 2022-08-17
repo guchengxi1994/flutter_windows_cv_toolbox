@@ -19,3 +19,7 @@ typedef CGetBlindWaterMarkFunc = ffi.Pointer<Utf8> Function(ffi.Pointer<Utf8>);
 /// convert color
 typedef CConvertColorFunc = ffi.Pointer<Utf8> Function(
     ffi.Pointer<Utf8>, ffi.Int);
+
+/// yolov3
+typedef CYolov3DetectionFunc = ffi.Void Function(
+    ffi.Pointer<Utf8>, ffi.Pointer<Utf8>, ffi.Pointer<Utf8>, ffi.Pointer<Utf8>);

@@ -26,6 +26,8 @@
 #include "tools/blind_watermark/blind_watermark.cpp"
 // convert color
 #include "tools/cvt_color/cvt_color.cpp"
+// yolov3
+#include "tools/object_detection/yolov3.cpp"
 
 using namespace cv;
 using namespace std;
@@ -98,5 +100,12 @@ extern "C" {
     char* convert_color(char* inputImagePath,int cvtType){
         CvtColor cvt;
         return cvt.cvtColor(inputImagePath,cvtType);
+    }
+
+    FUNCTION_ATTRIBUTE
+    void yolov3_detection(char* inputImagePath,char* modelPath,char* coconamePath,char* cfgFilePath){
+        Yolov3* yolov3 = new Yolov3();
+        dnn::Net net = yolov3->initYolov3(modelPath,coconamePath,cfgFilePath);
+        yolov3->runYolov3(net,inputImagePath);
     }
 }

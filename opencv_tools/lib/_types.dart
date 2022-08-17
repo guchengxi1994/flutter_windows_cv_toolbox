@@ -11,3 +11,16 @@ class ConvertColorModel {
   final int cvtType;
   ConvertColorModel({required this.imgPath, required this.cvtType});
 }
+
+class Yolov3Model {
+  final String inputImagePath;
+  final String modelPath;
+  final String coconamePath;
+  final String cfgFilePath;
+
+  Yolov3Model(
+      {required this.cfgFilePath,
+      required this.coconamePath,
+      required this.inputImagePath,
+      required this.modelPath});
+}

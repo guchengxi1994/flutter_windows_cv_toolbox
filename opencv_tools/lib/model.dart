@@ -52,4 +52,13 @@ class OpencvTools {
         .toDartString();
     return result;
   }
+
+  /// yolov3
+  static void yolov3Detection(Yolov3Model model) {
+    final Yolov3DetectionFunc func = _lib
+        .lookup<ffi.NativeFunction<CYolov3DetectionFunc>>("yolov3_detection")
+        .asFunction();
+    func(model.inputImagePath.toNativeUtf8(), model.modelPath.toNativeUtf8(),
+        model.coconamePath.toNativeUtf8(), model.cfgFilePath.toNativeUtf8());
+  }
 }
