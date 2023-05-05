@@ -22,3 +22,10 @@ typedef ConvertColorFunc = ffi.Pointer<Utf8> Function(ffi.Pointer<Utf8>, int);
 /// yolov3
 typedef Yolov3DetectionFunc = void Function(
     ffi.Pointer<Utf8>, ffi.Pointer<Utf8>, ffi.Pointer<Utf8>, ffi.Pointer<Utf8>);
+
+/// poly
+typedef LowPolyFunc = void Function(ffi.Pointer<Utf8>);
+
+/// poly image
+typedef LowPolyImageFunc = int Function(ffi.Pointer<Utf8> path, int height,
+    int width, ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);

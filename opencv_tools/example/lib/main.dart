@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, avoid_init_to_null
+// ignore_for_file: library_private_types_in_public_api, avoid_init_to_null, avoid_print
 
 import 'dart:async';
 import 'dart:io';
@@ -217,6 +217,57 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future<void> getPixes() async {
+    imagePath = await pickAnImage();
+
+    if (imagePath == null) {
+      return;
+    }
+    File f = File(imagePath!);
+    final fileData = await f.readAsBytes();
+
+    final r = OpencvTools.imagePixesUint8List(fileData);
+    print(r);
+  }
+
+  Uint8List? imageData = null;
+
+  Future<void> getEncodedLength() async {
+    imagePath = await pickAnImage();
+
+    if (imagePath == null) {
+      return;
+    }
+    File f = File(imagePath!);
+    final fileData = await f.readAsBytes();
+
+    final r = OpencvTools.encodeImgToPng(fileData);
+    imageData = r;
+    setState(() {});
+  }
+
+  Future<void> lowPoly() async {
+    imagePath = await pickAnImage();
+
+    if (imagePath == null) {
+      return;
+    }
+
+    OpencvTools.lowPoly(imagePath!);
+  }
+
+  Future<void> getPolyImage() async {
+    imagePath = await pickAnImage();
+
+    if (imagePath == null) {
+      return;
+    }
+
+    final r = OpencvTools.lowPolyImage(imagePath!);
+    imageData = r;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -236,6 +287,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       alignment: Alignment.center,
                     ),
                   ),
+                if (imageData != null) Image.memory(imageData!),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -270,6 +322,34 @@ class _MyHomePageState extends State<MyHomePage> {
                     ElevatedButton(
                       onPressed: yolov3,
                       child: const Text('yolov3'),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                      onPressed: getPixes,
+                      child: const Text('Get pixes'),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                      onPressed: getEncodedLength,
+                      child: const Text('Get Length'),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                      onPressed: lowPoly,
+                      child: const Text('Low poly'),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                      onPressed: getPolyImage,
+                      child: const Text('Get Low poly'),
                     ),
                   ],
                 )

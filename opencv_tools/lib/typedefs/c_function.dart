@@ -23,3 +23,13 @@ typedef CConvertColorFunc = ffi.Pointer<Utf8> Function(
 /// yolov3
 typedef CYolov3DetectionFunc = ffi.Void Function(
     ffi.Pointer<Utf8>, ffi.Pointer<Utf8>, ffi.Pointer<Utf8>, ffi.Pointer<Utf8>);
+
+/// poly
+typedef CLowPolyFunc = ffi.Void Function(ffi.Pointer<Utf8>);
+
+/// poly image
+typedef CLowPolyImageFunc = ffi.Int32 Function(
+    ffi.Pointer<Utf8> path,
+    ffi.Int32 height,
+    ffi.Int32 width,
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
