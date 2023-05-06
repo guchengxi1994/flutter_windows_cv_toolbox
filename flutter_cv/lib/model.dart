@@ -1,4 +1,4 @@
-part of './model.dart';
+part of 'cv.dart';
 
 class BlindWatermarkModel {
   final String imgPath;

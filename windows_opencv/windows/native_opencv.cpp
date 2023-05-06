@@ -1,6 +1,7 @@
 #pragma warning(disable : 4702)
 #include <opencv2/opencv.hpp>
 #include <chrono>
+#include <fstream>
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
 #define IS_WIN32
@@ -121,6 +122,23 @@ extern "C"
     }
 
     FUNCTION_ATTRIBUTE
+    int yolov3_with_result_detection(char *inputImagePath, char *modelPath, char *coconamePath, char *cfgFilePath, uchar **encodedOutput)
+    {
+        Yolov3 *yolov3 = new Yolov3();
+        dnn::Net net = yolov3->initYolov3(modelPath, coconamePath, cfgFilePath);
+        cv::Mat res = yolov3->runYolov3WithResult(net, inputImagePath);
+        cout<<"[cpp] "<<res.channels()<<endl;
+        cv::imwrite("C:/Users/xiaoshuyui/Desktop/bbbb.jpg", res); // for test
+        vector<uchar> buf;
+        cv::imencode(".jpg", res, buf); // save output into buf
+        *encodedOutput = (unsigned char *)malloc(buf.size());
+        for (int i = 0; i < buf.size(); i++)
+            (*encodedOutput)[i] = buf[i];
+        cout << "[cpp] done" << endl;
+        return (int)buf.size();
+    }
+
+    FUNCTION_ATTRIBUTE
     int32_t opencv_img_pixels(unsigned char *byteData, int32_t byteSize)
     {
         Mat src, dst;
@@ -159,7 +177,7 @@ extern "C"
     }
 
     FUNCTION_ATTRIBUTE
-    int low_poly_image(char *inputImagePath, int h, int w, uchar **encodedOutput)
+    int low_poly_image(char *inputImagePath, uchar **encodedOutput)
     {
         TriangleStyle t(inputImagePath, 300, 100, 700);
         cv::Mat res = t.result_image;
@@ -170,5 +188,34 @@ extern "C"
             (*encodedOutput)[i] = buf[i];
         cout << "[cpp] done" << endl;
         return (int)buf.size();
+    }
+
+    FUNCTION_ATTRIBUTE
+    int read_image(char *inputImagePath, uchar **encodedOutput)
+    {
+        cv::Mat res = cv::imread(inputImagePath);
+        vector<uchar> buf;
+        cv::imencode(".png", res, buf); // save output into buf
+        *encodedOutput = (unsigned char *)malloc(buf.size());
+        for (int i = 0; i < buf.size(); i++)
+            (*encodedOutput)[i] = buf[i];
+        cout << "[cpp] done" << endl;
+        return (int)buf.size();
+    }
+
+    FUNCTION_ATTRIBUTE
+    void save_image(char *inputImagePath, int h, int w, uint8_t *rawBytes, int length)
+    {
+        fstream file;
+        file.open(inputImagePath, ios::out | ios::binary);
+        if (!file.is_open())
+        {
+            cout << "[cpp] "
+                 << "error" << endl;
+            return;
+        }
+        file.write((char *)rawBytes, length);
+        file.close();
+        cout << "[cpp] done" << endl;
     }
 }

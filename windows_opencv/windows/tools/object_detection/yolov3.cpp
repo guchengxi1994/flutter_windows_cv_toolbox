@@ -168,5 +168,54 @@ void Yolov3::runYolov3(Net &net, char *imgPath)
             0.5,                      // 字体大小
             cv::Scalar(0, 255, 0));   // 字体颜色
                                       // 显示detectedFrame
-    imwrite("yolov3.jpg", detectedFrame);
+    imwrite("C:/Users/xiaoshuyui/Desktop/yolov3.jpg", detectedFrame);
 }
+
+cv::Mat Yolov3::runYolov3WithResult(Net &net, char *imgPath)
+{
+    // 从一个帧创建一个4D blob
+    cv::Mat blob;
+
+    double start = getTickCount() * 1.0;
+
+    Mat frame = imread(imgPath);
+
+    // 1/255:将图像像素值归一化0到1的目标范围
+    // Scalar(0, 0, 0):我们不在此处执行任何均值减法，因此将[0,0,0]传递给函数的mean参数
+    blob = cv::dnn::blobFromImage(frame, 1 / 255.0, cv::Size(inpWidth, inpHeight), cv::Scalar(0, 0, 0), true, false);
+
+    // 设置网络的输入
+    net.setInput(blob);
+
+    // 运行向前传递以获得输出层的输出
+    std::vector<cv::Mat> outs;
+    net.forward(outs, getOutputsNames(net)); // forward需要知道它的结束层
+
+    // 以较低的置信度移除边界框
+    postProcess(frame, outs); //端到端，输入和输出
+
+    std::cout << "succeed!!!" << std::endl;
+    cv::Mat detectedFrame;
+    frame.convertTo(detectedFrame, CV_8U);
+
+    double end = getTickCount() * 1.0;
+
+    double time = (end - start) / getTickFrequency() * 1000;
+
+    char runtime[100];
+    sprintf_s(runtime, "%.2f", time); // 帧率保留两位小数
+    std::string fpsString("Run Time:");
+    fpsString = fpsString + runtime + "ms";
+    ;                                 // 在"FPS:"后加入帧率数值字符串
+                                      //显示帧率
+    putText(detectedFrame,            // 图像矩阵
+            fpsString,                // string型文字内容
+            cv::Point(5, 20),         // 文字坐标，以左下角为原点
+            cv::FONT_HERSHEY_SIMPLEX, // 字体类型
+            0.5,                      // 字体大小
+            cv::Scalar(0, 255, 0));   // 字体颜色
+                                      // 显示detectedFrame
+    // imwrite("yolov3.jpg", detectedFrame);
+    return detectedFrame;
+}
+

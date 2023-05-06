@@ -1,11 +1,6 @@
 import 'dart:ffi' as ffi;
 import 'package:ffi/ffi.dart';
 
-// dart function signatures
-
-/// get current opencv version
-typedef VersionFunc = ffi.Pointer<Utf8> Function();
-
 /// add a blind watermark to image
 /// input1 : file path pointer,
 /// input2 : message string pointer,
@@ -23,9 +18,17 @@ typedef ConvertColorFunc = ffi.Pointer<Utf8> Function(ffi.Pointer<Utf8>, int);
 typedef Yolov3DetectionFunc = void Function(
     ffi.Pointer<Utf8>, ffi.Pointer<Utf8>, ffi.Pointer<Utf8>, ffi.Pointer<Utf8>);
 
+/// yolov3 with results
+typedef Yolov3DetectionWithResultFunc = int Function(
+    ffi.Pointer<Utf8>,
+    ffi.Pointer<Utf8>,
+    ffi.Pointer<Utf8>,
+    ffi.Pointer<Utf8>,
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>>);
+
 /// poly
 typedef LowPolyFunc = void Function(ffi.Pointer<Utf8>);
 
 /// poly image
-typedef LowPolyImageFunc = int Function(ffi.Pointer<Utf8> path, int height,
-    int width, ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
+typedef LowPolyImageFunc = int Function(
+    ffi.Pointer<Utf8> path, ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);

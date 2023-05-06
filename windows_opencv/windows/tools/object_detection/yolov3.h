@@ -28,6 +28,7 @@ public:
     void postProcess(Mat& frame,const vector<Mat>& out);
     vector<cv::String> getOutputsNames(const Net& net);
     void runYolov3(Net& net, char* imgPath);
+    cv::Mat runYolov3WithResult(Net& net, char* imgPath);
     void drawPred(int classId, float conf, int left, int top, int right, int bottom, Mat& frame);
 };
 
