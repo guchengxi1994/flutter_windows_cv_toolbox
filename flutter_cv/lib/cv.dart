@@ -1,15 +1,15 @@
 import 'dart:ffi' as ffi;
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
-import 'package:opencv_tools/typedefs/c_function.dart';
-import 'package:opencv_tools/typedefs/dart_function.dart';
-import 'package:opencv_tools/utils.dart';
+import 'package:flutter_cv/typedefs/c_function.dart';
+import 'package:flutter_cv/typedefs/dart_function.dart';
+import 'package:flutter_cv/utils/extension.dart';
 
-part './_types.dart';
-part './_constants.dart';
+part 'model.dart';
+part 'constants.dart';
 
-class OpencvTools {
-  OpencvTools._();
+class FlutterCV {
+  FlutterCV._();
 
   /// 注册插件
   static final ffi.DynamicLibrary _lib =
@@ -20,6 +20,31 @@ class OpencvTools {
     final VersionFunc versionFunc =
         _lib.lookup<ffi.NativeFunction<CVersionFunc>>('version').asFunction();
     return versionFunc().toDartString();
+  }
+
+  /// 读取图片
+  @Deprecated("Use dart `File readAsBytes is better`")
+  static Uint8List imread(String path) {
+    final ImreadFunc func =
+        _lib.lookup<ffi.NativeFunction<CImreadFunc>>("read_image").asFunction();
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedImPtr = malloc.allocate(8);
+    int length = func(path.toNativeUtf8(), encodedImPtr);
+
+    ffi.Pointer<ffi.Uint8> cppPointer = encodedImPtr.elementAt(0).value;
+    Uint8List encodedImBytes = cppPointer.asTypedList(length);
+    return encodedImBytes;
+  }
+
+  /// 保存图片
+  @Deprecated("Use dart `File saveAsBytes is better`")
+  static void imsave(String path, Uint8List data,
+      {int width = 800, int height = 600}) {
+    final ImsaveFunc func =
+        _lib.lookup<ffi.NativeFunction<CImsaveFunc>>("save_image").asFunction();
+    var ptr = data.allocatePointer();
+    print(data[data.length - 200]);
+    func(path.toNativeUtf8(), height, width, ptr, data.length);
+    malloc.free(ptr);
   }
 
   /// 将特定字符串盲水印加到图像中
@@ -56,12 +81,31 @@ class OpencvTools {
   }
 
   /// yolov3
+  @Deprecated("use `yolov3DetectionWithResult` instead")
   static void yolov3Detection(Yolov3Model model) {
     final Yolov3DetectionFunc func = _lib
         .lookup<ffi.NativeFunction<CYolov3DetectionFunc>>("yolov3_detection")
         .asFunction();
     func(model.inputImagePath.toNativeUtf8(), model.modelPath.toNativeUtf8(),
         model.coconamePath.toNativeUtf8(), model.cfgFilePath.toNativeUtf8());
+  }
+
+  static Uint8List yolov3WithResultDetection(Yolov3Model model) {
+    final Yolov3DetectionWithResultFunc func = _lib
+        .lookup<ffi.NativeFunction<CYolov3DetectionWithResultFunc>>(
+            "yolov3_with_result_detection")
+        .asFunction();
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> resultPtr = malloc.allocate(8);
+    final length = func(
+        model.inputImagePath.toNativeUtf8(),
+        model.modelPath.toNativeUtf8(),
+        model.coconamePath.toNativeUtf8(),
+        model.cfgFilePath.toNativeUtf8(),
+        resultPtr);
+    ffi.Pointer<ffi.Uint8> cppPointer = resultPtr.elementAt(0).value;
+    Uint8List encodedImBytes = cppPointer.asTypedList(length);
+    print("[flutter] :${encodedImBytes.length}");
+    return encodedImBytes;
   }
 
   /// low poly
@@ -91,6 +135,7 @@ class OpencvTools {
     return result;
   }
 
+  @Deprecated("For test")
   static int imagePixesUint8List(Uint8List list) {
     final preOpencvPtr = list.allocatePointer();
     int result = opencvImgPixels(preOpencvPtr, list.length);
@@ -104,6 +149,7 @@ class OpencvTools {
   static late int Function(int height, int width, ffi.Pointer<ffi.Uint8> bytes,
       ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput) encodeIm;
 
+  @Deprecated("For test")
   static Uint8List encodeImgToPng(Uint8List list) {
     encodeIm = _lib
         .lookup<
@@ -129,13 +175,14 @@ class OpencvTools {
     return encodedImBytes;
   }
 
-  static Uint8List lowPolyImage(String path,
-      {int width = 800, int height = 600}) {
+  static Uint8List lowPolyImage(
+    String path,
+  ) {
     final LowPolyImageFunc func = _lib
         .lookup<ffi.NativeFunction<CLowPolyImageFunc>>("low_poly_image")
         .asFunction();
     ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedImPtr = malloc.allocate(8);
-    int length = func(path.toNativeUtf8(), height, width, encodedImPtr);
+    int length = func(path.toNativeUtf8(), encodedImPtr);
 
     ffi.Pointer<ffi.Uint8> cppPointer = encodedImPtr.elementAt(0).value;
     Uint8List encodedImBytes = cppPointer.asTypedList(length);

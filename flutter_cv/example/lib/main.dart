@@ -6,10 +6,11 @@ import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:opencv_tools/tools.dart';
+import 'package:flutter_cv/lib.dart';
 
-const title = ' OpenCV Tools Example';
+const title = 'Flutter CV Example';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void showVersion() {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final snackbar = SnackBar(
-      content: Text('OpenCV version: ${OpencvTools.getOpencvVersion()}'),
+      content: Text('OpenCV version: ${FlutterCV.getOpencvVersion()}'),
     );
 
     scaffoldMessenger
@@ -80,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final port = ReceivePort();
     // Spawning an isolate
     Isolate.spawn<BlindWatermarkModel>(
-      OpencvTools.addBlindWatermarkToImage,
+      FlutterCV.addBlindWatermarkToImage,
       args,
       onError: port.sendPort,
       onExit: port.sendPort,
@@ -116,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final args = BlindWatermarkModel(imgPath: imagePath!, message: "");
     // Spawning an isolate
     Isolate.spawn<BlindWatermarkModel>(
-      OpencvTools.getBlindWatermark,
+      FlutterCV.getBlindWatermark,
       args,
       onError: port.sendPort,
       onExit: port.sendPort,
@@ -153,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
         imgPath: imagePath!, cvtType: CvtColor.RGB2HLSFULL /* or 69 */);
     // Spawning an isolate
     Isolate.spawn<ConvertColorModel>(
-      OpencvTools.convertColor,
+      FlutterCV.convertColor,
       args,
       onError: port.sendPort,
       onExit: port.sendPort,
@@ -196,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
             'D:\\github_repo\\flutter_windows_opencv\\windows_opencv\\nn_models\\yolov3.weights');
     // Spawning an isolate
     Isolate.spawn<Yolov3Model>(
-      OpencvTools.yolov3Detection,
+      FlutterCV.yolov3Detection,
       args,
       onError: port.sendPort,
       onExit: port.sendPort,
@@ -211,9 +212,39 @@ class _MyHomePageState extends State<MyHomePage> {
       await sub.cancel();
 
       setState(() {
+        File f = File("C:/Users/xiaoshuyui/Desktop/yolov3.jpg");
+        imageData = f.readAsBytesSync();
         _isProcessed = true;
         _isWorking = false;
       });
+    });
+  }
+
+  Future<void> yolov3_2() async {
+    imagePath = await pickAnImage();
+
+    if (imagePath == null) {
+      return;
+    }
+    setState(() {
+      _isWorking = true;
+    });
+
+    // Creating a port for communication with isolate and arguments for entry point
+    final args = Yolov3Model(
+        cfgFilePath:
+            'D:\\github_repo\\flutter_windows_opencv\\windows_opencv\\nn_models\\yolov3.cfg',
+        coconamePath:
+            'D:\\github_repo\\flutter_windows_opencv\\windows_opencv\\nn_models\\coco_names.txt',
+        inputImagePath: imagePath!,
+        modelPath:
+            'D:\\github_repo\\flutter_windows_opencv\\windows_opencv\\nn_models\\yolov3.weights');
+    final r = await compute(FlutterCV.yolov3WithResultDetection, args);
+
+    setState(() {
+      imageData = r;
+      _isProcessed = true;
+      _isWorking = false;
     });
   }
 
@@ -226,11 +257,20 @@ class _MyHomePageState extends State<MyHomePage> {
     File f = File(imagePath!);
     final fileData = await f.readAsBytes();
 
-    final r = OpencvTools.imagePixesUint8List(fileData);
+    final r = FlutterCV.imagePixesUint8List(fileData);
     print(r);
   }
 
   Uint8List? imageData = null;
+
+  Future<void> imsave() async {
+    if (imageData == null) {
+      return;
+    }
+
+    FlutterCV.imsave(r"C:\Users\xiaoshuyui\Desktop\tupiantest.png", imageData!,
+        height: 675, width: 1200);
+  }
 
   Future<void> getEncodedLength() async {
     imagePath = await pickAnImage();
@@ -241,7 +281,7 @@ class _MyHomePageState extends State<MyHomePage> {
     File f = File(imagePath!);
     final fileData = await f.readAsBytes();
 
-    final r = OpencvTools.encodeImgToPng(fileData);
+    final r = FlutterCV.encodeImgToPng(fileData);
     imageData = r;
     setState(() {});
   }
@@ -253,7 +293,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    OpencvTools.lowPoly(imagePath!);
+    FlutterCV.lowPoly(imagePath!);
   }
 
   Future<void> getPolyImage() async {
@@ -263,7 +303,19 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    final r = OpencvTools.lowPolyImage(imagePath!);
+    final r = FlutterCV.lowPolyImage(imagePath!);
+    imageData = r;
+    setState(() {});
+  }
+
+  Future<void> imread() async {
+    imagePath = await pickAnImage();
+
+    if (imagePath == null) {
+      return;
+    }
+
+    final r = FlutterCV.imread(imagePath!);
     imageData = r;
     setState(() {});
   }
@@ -278,81 +330,61 @@ class _MyHomePageState extends State<MyHomePage> {
             child: ListView(
               shrinkWrap: true,
               children: <Widget>[
-                if (_isProcessed && !_isWorking)
-                  ConstrainedBox(
-                    constraints:
-                        const BoxConstraints(maxWidth: 3000, maxHeight: 300),
-                    child: Image.file(
-                      File(imagePath!),
-                      alignment: Alignment.center,
-                    ),
-                  ),
-                if (imageData != null) Image.memory(imageData!),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                Wrap(
+                  spacing: 20,
+                  runSpacing: 20,
                   children: [
                     ElevatedButton(
                       onPressed: showVersion,
                       child: const Text('Show version'),
                     ),
-                    const SizedBox(
-                      height: 20,
+                    ElevatedButton(
+                      onPressed: imread,
+                      child: const Text('read image'),
+                    ),
+                    ElevatedButton(
+                      onPressed: imsave,
+                      child: const Text('save image'),
                     ),
                     ElevatedButton(
                       onPressed: blindWatermark,
                       child: const Text('Add Blind watermark'),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
                     ElevatedButton(
                       onPressed: getBlindWatermark,
                       child: const Text('Get blind watermark'),
-                    ),
-                    const SizedBox(
-                      height: 20,
                     ),
                     ElevatedButton(
                       onPressed: cvtColor,
                       child: const Text('Convert color'),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
                     ElevatedButton(
                       onPressed: yolov3,
                       child: const Text('yolov3'),
                     ),
-                    const SizedBox(
-                      height: 20,
+                    ElevatedButton(
+                      onPressed: yolov3_2,
+                      child: const Text('yolov3 2'),
                     ),
                     ElevatedButton(
                       onPressed: getPixes,
                       child: const Text('Get pixes'),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
                     ElevatedButton(
                       onPressed: getEncodedLength,
                       child: const Text('Get Length'),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
                     ElevatedButton(
                       onPressed: lowPoly,
                       child: const Text('Low poly'),
-                    ),
-                    const SizedBox(
-                      height: 20,
                     ),
                     ElevatedButton(
                       onPressed: getPolyImage,
                       child: const Text('Get Low poly'),
                     ),
                   ],
-                )
+                ),
+                if (imageData != null) Image.memory(imageData!),
               ],
             ),
           ),
