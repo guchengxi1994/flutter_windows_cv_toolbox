@@ -31,6 +31,8 @@
 #include "tools/object_detection/yolov3.cpp"
 // low_poly
 #include "tools/low_poly/low_poly.cpp"
+// blur
+#include "tools/img_blur/image_blur.cpp"
 
 using namespace cv;
 using namespace std;
@@ -127,8 +129,7 @@ extern "C"
         Yolov3 *yolov3 = new Yolov3();
         dnn::Net net = yolov3->initYolov3(modelPath, coconamePath, cfgFilePath);
         cv::Mat res = yolov3->runYolov3WithResult(net, inputImagePath);
-        cout<<"[cpp] "<<res.channels()<<endl;
-        cv::imwrite("C:/Users/xiaoshuyui/Desktop/bbbb.jpg", res); // for test
+        cout << "[cpp] " << res.channels() << endl;
         vector<uchar> buf;
         cv::imencode(".jpg", res, buf); // save output into buf
         *encodedOutput = (unsigned char *)malloc(buf.size());
@@ -160,7 +161,6 @@ extern "C"
         cv::Mat img = cv::Mat(h, w, CV_8UC3, rawBytes);
         vector<uchar> buf;
         cv::imencode(".jpg", img, buf); // save output into buf
-        cv::imwrite("C:/Users/xiaoshuyui/Desktop/aaaaa.jpg", img);
         *encodedOutput = (unsigned char *)malloc(buf.size());
         for (int i = 0; i < buf.size(); i++)
             (*encodedOutput)[i] = buf[i];
@@ -217,5 +217,27 @@ extern "C"
         file.write((char *)rawBytes, length);
         file.close();
         cout << "[cpp] done" << endl;
+    }
+
+    FUNCTION_ATTRIBUTE
+    int image_blur(BlurStruct s, uchar **encodedOutput)
+    {
+        try
+        {
+            ImageBlur *blur = new ImageBlur();
+            blur->imageBlur(s.filename, s.method, s.kernelSize);
+            vector<uchar> buf;
+            cv::imencode(".png", blur->result, buf); // save output into buf
+            *encodedOutput = (unsigned char *)malloc(buf.size());
+            for (int i = 0; i < buf.size(); i++)
+                (*encodedOutput)[i] = buf[i];
+            cout << "[cpp] done" << endl;
+            return (int)buf.size();
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << e.what() << '\n';
+            return -1;
+        }
     }
 }

@@ -1,5 +1,6 @@
 import 'dart:ffi' as ffi;
 import 'package:ffi/ffi.dart';
+import 'package:flutter_cv/typedefs/simple_use/struct.dart';
 
 // dart function signatures
 
@@ -13,3 +14,7 @@ typedef ImreadFunc = int Function(
 // imsave
 typedef ImsaveFunc = void Function(ffi.Pointer<Utf8> path, int height,
     int width, ffi.Pointer<ffi.Uint8> bytes, int length);
+
+// blur
+typedef ImageBlur = int Function(ffi.Pointer<ImageBlurStruct> s,
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);

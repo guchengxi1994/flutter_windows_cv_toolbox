@@ -308,6 +308,18 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {});
   }
 
+  Future<void> imageBlur1() async {
+    imagePath = await pickAnImage();
+
+    if (imagePath == null) {
+      return;
+    }
+
+    final r = FlutterCV.imageBlur(10, "aaa", filename: imagePath!);
+    imageData = r;
+    setState(() {});
+  }
+
   Future<void> imread() async {
     imagePath = await pickAnImage();
 
@@ -381,6 +393,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     ElevatedButton(
                       onPressed: getPolyImage,
                       child: const Text('Get Low poly'),
+                    ),
+                    ElevatedButton(
+                      onPressed: imageBlur1,
+                      child: const Text('blur 1'),
                     ),
                   ],
                 ),

@@ -1,8 +1,11 @@
+// ignore_for_file: avoid_print
+
 import 'dart:ffi' as ffi;
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 import 'package:flutter_cv/typedefs/c_function.dart';
 import 'package:flutter_cv/typedefs/dart_function.dart';
+import 'package:flutter_cv/typedefs/simple_use/struct.dart';
 import 'package:flutter_cv/utils/extension.dart';
 
 part 'model.dart';
@@ -184,6 +187,25 @@ class FlutterCV {
     ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedImPtr = malloc.allocate(8);
     int length = func(path.toNativeUtf8(), encodedImPtr);
 
+    ffi.Pointer<ffi.Uint8> cppPointer = encodedImPtr.elementAt(0).value;
+    Uint8List encodedImBytes = cppPointer.asTypedList(length);
+    return encodedImBytes;
+  }
+
+  static Uint8List imageBlur(int kernelSize, String method,
+      {String? filename, Uint8List? origin}) {
+    assert(filename != null || origin != null);
+
+    final ImageBlur func =
+        _lib.lookup<ffi.NativeFunction<CImageBlur>>("image_blur").asFunction();
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedImPtr = malloc.allocate(8);
+    // final cArray = malloc<ImageBlurStruct>(1);
+    ffi.Pointer<ImageBlurStruct> inAddress = calloc<ImageBlurStruct>()
+      ..ref.filename = filename!.toNativeUtf8()
+      ..ref.kernelSize = kernelSize
+      ..ref.method = method.toNativeUtf8();
+
+    int length = func(inAddress, encodedImPtr);
     ffi.Pointer<ffi.Uint8> cppPointer = encodedImPtr.elementAt(0).value;
     Uint8List encodedImBytes = cppPointer.asTypedList(length);
     return encodedImBytes;

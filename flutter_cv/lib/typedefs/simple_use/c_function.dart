@@ -1,6 +1,8 @@
 import 'dart:ffi' as ffi;
 import 'package:ffi/ffi.dart';
 
+import 'struct.dart';
+
 // C function signatures
 
 /// get current opencv version
@@ -17,3 +19,7 @@ typedef CImsaveFunc = ffi.Void Function(
     ffi.Int32 width,
     ffi.Pointer<ffi.Uint8> bytes,
     ffi.Int32 length);
+
+// blur
+typedef CImageBlur = ffi.Int32 Function(ffi.Pointer<ImageBlurStruct> s,
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
