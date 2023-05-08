@@ -33,3 +33,8 @@ typedef CLowPolyFunc = ffi.Void Function(ffi.Pointer<Utf8>);
 /// poly image
 typedef CLowPolyImageFunc = ffi.Int32 Function(
     ffi.Pointer<Utf8> path, ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
+
+/// camera
+typedef CStartCameraFunc = ffi.Void Function();
+
+typedef CStopCameraFunc = ffi.Void Function();

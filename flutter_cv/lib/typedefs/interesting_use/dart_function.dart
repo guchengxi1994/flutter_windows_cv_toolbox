@@ -32,3 +32,8 @@ typedef LowPolyFunc = void Function(ffi.Pointer<Utf8>);
 /// poly image
 typedef LowPolyImageFunc = int Function(
     ffi.Pointer<Utf8> path, ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
+
+/// camera
+typedef StartCameraFunc = void Function();
+
+typedef StopCameraFunc = void Function();

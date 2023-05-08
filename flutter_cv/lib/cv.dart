@@ -3,6 +3,7 @@
 import 'dart:ffi' as ffi;
 import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
+import 'package:flutter_cv/camera.dart';
 import 'package:flutter_cv/typedefs/c_function.dart';
 import 'package:flutter_cv/typedefs/dart_function.dart';
 import 'package:flutter_cv/typedefs/simple_use/struct.dart';
@@ -209,5 +210,16 @@ class FlutterCV {
     ffi.Pointer<ffi.Uint8> cppPointer = encodedImPtr.elementAt(0).value;
     Uint8List encodedImBytes = cppPointer.asTypedList(length);
     return encodedImBytes;
+  }
+
+  /*
+    cameras
+  */
+  static startCamera() {
+    Camera.startCamera(_lib);
+  }
+
+  static stopCamera() {
+    Camera.stopCamera(_lib);
   }
 }

@@ -336,74 +336,81 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text(title)),
-      body: Stack(
+      body: ListView(
+        shrinkWrap: true,
         children: <Widget>[
-          Center(
-            child: ListView(
-              shrinkWrap: true,
-              children: <Widget>[
-                Wrap(
-                  spacing: 20,
-                  runSpacing: 20,
-                  children: [
-                    ElevatedButton(
-                      onPressed: showVersion,
-                      child: const Text('Show version'),
-                    ),
-                    ElevatedButton(
-                      onPressed: imread,
-                      child: const Text('read image'),
-                    ),
-                    ElevatedButton(
-                      onPressed: imsave,
-                      child: const Text('save image'),
-                    ),
-                    ElevatedButton(
-                      onPressed: blindWatermark,
-                      child: const Text('Add Blind watermark'),
-                    ),
-                    ElevatedButton(
-                      onPressed: getBlindWatermark,
-                      child: const Text('Get blind watermark'),
-                    ),
-                    ElevatedButton(
-                      onPressed: cvtColor,
-                      child: const Text('Convert color'),
-                    ),
-                    ElevatedButton(
-                      onPressed: yolov3,
-                      child: const Text('yolov3'),
-                    ),
-                    ElevatedButton(
-                      onPressed: yolov3_2,
-                      child: const Text('yolov3 2'),
-                    ),
-                    ElevatedButton(
-                      onPressed: getPixes,
-                      child: const Text('Get pixes'),
-                    ),
-                    ElevatedButton(
-                      onPressed: getEncodedLength,
-                      child: const Text('Get Length'),
-                    ),
-                    ElevatedButton(
-                      onPressed: lowPoly,
-                      child: const Text('Low poly'),
-                    ),
-                    ElevatedButton(
-                      onPressed: getPolyImage,
-                      child: const Text('Get Low poly'),
-                    ),
-                    ElevatedButton(
-                      onPressed: imageBlur1,
-                      child: const Text('blur 1'),
-                    ),
-                  ],
-                ),
-                if (imageData != null) Image.memory(imageData!),
-              ],
-            ),
+          const FlutterCameraWidgetV2(),
+          Wrap(
+            spacing: 20,
+            runSpacing: 20,
+            children: [
+              ElevatedButton(
+                onPressed: showVersion,
+                child: const Text('Show version'),
+              ),
+              ElevatedButton(
+                onPressed: imread,
+                child: const Text('read image'),
+              ),
+              ElevatedButton(
+                onPressed: imsave,
+                child: const Text('save image'),
+              ),
+              ElevatedButton(
+                onPressed: blindWatermark,
+                child: const Text('Add Blind watermark'),
+              ),
+              ElevatedButton(
+                onPressed: getBlindWatermark,
+                child: const Text('Get blind watermark'),
+              ),
+              ElevatedButton(
+                onPressed: cvtColor,
+                child: const Text('Convert color'),
+              ),
+              ElevatedButton(
+                onPressed: yolov3,
+                child: const Text('yolov3'),
+              ),
+              ElevatedButton(
+                onPressed: yolov3_2,
+                child: const Text('yolov3 2'),
+              ),
+              ElevatedButton(
+                onPressed: getPixes,
+                child: const Text('Get pixes'),
+              ),
+              ElevatedButton(
+                onPressed: getEncodedLength,
+                child: const Text('Get Length'),
+              ),
+              ElevatedButton(
+                onPressed: lowPoly,
+                child: const Text('Low poly'),
+              ),
+              ElevatedButton(
+                onPressed: getPolyImage,
+                child: const Text('Get Low poly'),
+              ),
+              ElevatedButton(
+                onPressed: imageBlur1,
+                child: const Text('blur 1'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  FlutterCV.startCamera();
+                },
+                child: const Text('camera on'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  FlutterCV.stopCamera();
+                },
+                child: const Text('camera off'),
+              ),
+            ],
           ),
+          if (imageData != null) Image.memory(imageData!),
           if (_isWorking)
             Positioned.fill(
               child: Container(
