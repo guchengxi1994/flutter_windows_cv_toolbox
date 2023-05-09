@@ -38,3 +38,11 @@ typedef CLowPolyImageFunc = ffi.Int32 Function(
 typedef CStartCameraFunc = ffi.Void Function();
 
 typedef CStopCameraFunc = ffi.Void Function();
+
+/// inpaint
+typedef CImageInpaintFunc = ffi.Int32 Function(
+    ffi.Pointer<ffi.Uint8> input,
+    ffi.Int32 inLength,
+    ffi.Pointer<ffi.Uint8> mask,
+    ffi.Int32 maskLength,
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);

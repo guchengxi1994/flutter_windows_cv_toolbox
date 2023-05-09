@@ -15,8 +15,7 @@ dependencies:
   ffi: ^2.0.1
   native_opencv_windows:
     path: ../windows_opencv
-  tuple: ^2.0.0
-
+  painter: ^2.0.0
 
 
 dev_dependencies:

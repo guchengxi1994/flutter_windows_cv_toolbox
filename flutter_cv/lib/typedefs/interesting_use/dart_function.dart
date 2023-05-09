@@ -37,3 +37,11 @@ typedef LowPolyImageFunc = int Function(
 typedef StartCameraFunc = void Function();
 
 typedef StopCameraFunc = void Function();
+
+/// inpaint
+typedef ImageInpaintFunc = int Function(
+    ffi.Pointer<ffi.Uint8> input,
+    int inLength,
+    ffi.Pointer<ffi.Uint8> mask,
+    int maskLength,
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);

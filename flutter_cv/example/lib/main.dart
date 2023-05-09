@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import 'blur.dart';
+import 'inpaint.dart';
 import 'low_poly.dart';
 import 'simple_camera.dart';
 import 'simple_use.dart';
@@ -83,6 +84,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   }));
                 },
                 child: const Text("blur")),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (c) {
+                    return const InpaintFormV2();
+                  }));
+                },
+                child: const Text("Inpaint")),
           ],
         ),
       ),

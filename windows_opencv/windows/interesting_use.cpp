@@ -135,22 +135,6 @@ extern "C"
     }
 
     FUNCTION_ATTRIBUTE
-    int32_t opencv_img_pixels(unsigned char *byteData, int32_t byteSize)
-    {
-        Mat src, dst;
-
-        vector<unsigned char> ImVec(byteData, byteData + byteSize);
-        src = imdecode(ImVec, IMREAD_COLOR);
-        if (src.empty())
-        {
-            printf(" Error opening image\n");
-            return -1;
-        }
-
-        return (int32_t)src.total();
-    }
-
-    FUNCTION_ATTRIBUTE
     int encodeImToPng(int h, int w, uchar *rawBytes, uchar **encodedOutput)
     {
         cv::Mat img = cv::Mat(h, w, CV_8UC3, rawBytes);
@@ -178,6 +162,26 @@ extern "C"
         cv::Mat res = t.result_image;
         vector<uchar> buf;
         cv::imencode(".png", res, buf); // save output into buf
+        *encodedOutput = (unsigned char *)malloc(buf.size());
+        for (int i = 0; i < buf.size(); i++)
+            (*encodedOutput)[i] = buf[i];
+        cout << "[cpp] done" << endl;
+        return (int)buf.size();
+    }
+
+    FUNCTION_ATTRIBUTE
+    int image_inpaint(uchar *inputBytes, int32_t inputLength, uchar *maskBytes, int32_t maskLength, uchar **encodedOutput)
+    {
+        vector<unsigned char> ImVec(inputBytes, inputBytes + inputLength);
+        cv::Mat img = cv::imdecode(ImVec, IMREAD_COLOR);
+        vector<unsigned char> maskVec(maskBytes, maskBytes + maskLength);
+        cv::Mat mask = cv::imdecode(maskVec, IMREAD_GRAYSCALE);
+        cv::resize(mask,mask,cv::Size(img.rows,img.cols));
+        // cv::imwrite("C:/Users/xiaoshuyui/Desktop/aaaaaaaaaaa.png",mask);
+        cv::Mat dst;
+        cv::inpaint(img, mask, dst, 3, INPAINT_TELEA);
+        vector<uchar> buf;
+        cv::imencode(".png", dst, buf); // save output into buf
         *encodedOutput = (unsigned char *)malloc(buf.size());
         for (int i = 0; i < buf.size(); i++)
             (*encodedOutput)[i] = buf[i];

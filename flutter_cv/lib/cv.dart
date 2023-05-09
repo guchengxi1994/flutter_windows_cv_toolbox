@@ -222,4 +222,17 @@ class FlutterCV {
   static stopCamera() {
     Camera.stopCamera(_lib);
   }
+
+  static Uint8List inpaint(Uint8List input, Uint8List mask) {
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedImPtr = malloc.allocate(8);
+    final ImageInpaintFunc func = _lib
+        .lookup<ffi.NativeFunction<CImageInpaintFunc>>("image_inpaint")
+        .asFunction();
+    final length = func(input.allocatePointer(), input.length,
+        mask.allocatePointer(), mask.length, encodedImPtr);
+
+    ffi.Pointer<ffi.Uint8> cppPointer = encodedImPtr.elementAt(0).value;
+    Uint8List encodedImBytes = cppPointer.asTypedList(length);
+    return encodedImBytes;
+  }
 }

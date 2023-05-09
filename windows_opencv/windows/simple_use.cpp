@@ -30,7 +30,23 @@ using namespace cv;
 using namespace std;
 
 extern "C"
-{
+{   
+    FUNCTION_ATTRIBUTE
+    int32_t opencv_img_pixels(unsigned char *byteData, int32_t byteSize)
+    {
+        Mat src, dst;
+
+        vector<unsigned char> ImVec(byteData, byteData + byteSize);
+        src = imdecode(ImVec, IMREAD_COLOR);
+        if (src.empty())
+        {
+            printf(" Error opening image\n");
+            return -1;
+        }
+
+        return (int32_t)src.total();
+    }
+
     FUNCTION_ATTRIBUTE
     int read_image(char *inputImagePath, uchar **encodedOutput)
     {
