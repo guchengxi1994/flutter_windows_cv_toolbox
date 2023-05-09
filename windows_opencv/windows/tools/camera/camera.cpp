@@ -76,6 +76,7 @@ void FlutterCamera::startCamera()
 void FlutterCamera::stopCamera()
 {
     IS_CAMERA_ON = 0;
+    capture.release();  
 }
 
 void FlutterCamera::cameraCallback(void (*refreshUint8List)(int), uchar **encodedOutput)

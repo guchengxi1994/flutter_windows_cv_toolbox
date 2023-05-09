@@ -7,6 +7,7 @@ import 'package:ffi/ffi.dart';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cv/cv.dart';
 
 typedef CInitCamera = ffi.Void Function(
     ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
@@ -168,16 +169,22 @@ class _FlutterCameraWidgetV2State extends State<FlutterCameraWidgetV2> {
       ffi.Pointer<ffi.Uint8> cppPointer = encodedImPtr.elementAt(0).value;
       data = cppPointer.asTypedList(length);
 
-      if (data != null) {
+      if (data != null && mounted) {
         image = await decodeImageFromList(data!);
         setState(() {});
+      } else {
+        _timer?.cancel();
       }
     });
   }
 
   @override
   void dispose() {
+    /// FIXME
+    ///
+    /// a memory leak if setState() is being called
     _timer?.cancel();
+    FlutterCV.stopCamera();
     super.dispose();
   }
 
@@ -202,6 +209,27 @@ class _FlutterCameraWidgetV2State extends State<FlutterCameraWidgetV2> {
             height: 400,
             child: CustomPaint(
               painter: CustomImagePainter(image!),
+              child: Stack(
+                children: [
+                  Positioned(
+                      right: 20,
+                      bottom: 20,
+                      child: InkWell(
+                        onTap: () async {
+                          _timer?.cancel();
+                          FlutterCV.stopCamera();
+                        },
+                        child: Container(
+                          color: Colors.white.withOpacity(0.5),
+                          width: 150,
+                          height: 30,
+                          child: const Center(
+                            child: Text("Tap to stop"),
+                          ),
+                        ),
+                      ))
+                ],
+              ),
             ),
           );
   }
