@@ -283,8 +283,7 @@ extern "C"
     }
 
     FUNCTION_ATTRIBUTE
-    int getCameraImage(){
-        return flutterCamera.getImage(cameraEncodedOutput);
+    int getCameraImage(CameraStruct c){
+        return flutterCamera.getImage(cameraEncodedOutput,c.width,c.height,c.fps);
     }
-
 }

@@ -19,3 +19,14 @@ class Camera {
     func();
   }
 }
+
+class CameraStruct extends ffi.Struct {
+  @ffi.Int32()
+  external int width;
+  @ffi.Int32()
+  external int height;
+  @ffi.Int32()
+  external int mode;
+  @ffi.Int32()
+  external int fps;
+}

@@ -9,6 +9,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_cv/cv.dart';
 
+import '../camera.dart';
+
 typedef CInitCamera = ffi.Void Function(
     ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
 
@@ -21,9 +23,10 @@ typedef CFlutterEmbeddingCamera = ffi.Void Function(
 typedef FlutterEmbeddingCamera = void Function(
     ffi.Pointer<ffi.NativeFunction<ffi.Void Function(ffi.Int32)>>);
 
-typedef CFlutterGetCameraImage = ffi.Int32 Function();
+typedef CFlutterGetCameraImage = ffi.Int32 Function(
+    ffi.Pointer<CameraStruct> c);
 
-typedef FlutterGetCameraImage = int Function();
+typedef FlutterGetCameraImage = int Function(ffi.Pointer<CameraStruct> c);
 
 @Deprecated("blink")
 class FlutterCameraWidget extends StatefulWidget {
@@ -66,13 +69,19 @@ class _FlutterCameraWidgetState extends State<FlutterCameraWidget> {
 
   bool started = false;
 
+  ffi.Pointer<CameraStruct> inAddress = calloc<CameraStruct>()
+    ..ref.width = 600
+    ..ref.height = 400
+    ..ref.mode = 1
+    ..ref.fps = 15;
+
   late final stream =
       Stream<Uint8List?>.periodic(const Duration(milliseconds: 100), (x) {
     if (!started) {
       return null;
     }
     try {
-      int length = getImageFromCamera();
+      int length = getImageFromCamera(inAddress);
       if (length == -1) {
         return null;
       }
@@ -158,11 +167,17 @@ class _FlutterCameraWidgetV2State extends State<FlutterCameraWidgetV2> {
     });
   }
 
+  ffi.Pointer<CameraStruct> inAddress = calloc<CameraStruct>()
+    ..ref.width = 600
+    ..ref.height = 400
+    ..ref.mode = 1
+    ..ref.fps = 15;
+
   void start() {
     _timer?.cancel();
     _timer =
         Timer.periodic(const Duration(milliseconds: 1000 ~/ 20), (timer) async {
-      int length = getImageFromCamera();
+      int length = getImageFromCamera(inAddress);
       if (length == -1) {
         return;
       }

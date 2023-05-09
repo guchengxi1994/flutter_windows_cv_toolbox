@@ -1,14 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, avoid_init_to_null, avoid_print
 
-import 'dart:async';
-import 'dart:io';
-import 'dart:isolate';
-import 'dart:typed_data';
-
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cv/lib.dart';
 
 import 'blur.dart';
 import 'low_poly.dart';
@@ -51,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(title: const Text(title)),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Wrap(
           runSpacing: 20,
           spacing: 20,
