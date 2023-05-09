@@ -4,7 +4,6 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   native_opencv_windows
-  texture_rgba_renderer
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

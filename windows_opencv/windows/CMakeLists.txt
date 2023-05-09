@@ -24,7 +24,9 @@ set(OPENCV_DLL
 
 add_library(${PLUGIN_NAME} SHARED
   "native_opencv_windows_plugin.cpp"
-  "native_opencv.cpp"
+  "interesting_use.cpp"
+  "simple_use.cpp"
+  "fcamera.cpp"
 )
 apply_standard_settings(${PLUGIN_NAME})
 set_target_properties(${PLUGIN_NAME} PROPERTIES

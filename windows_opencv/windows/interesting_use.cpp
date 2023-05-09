@@ -31,18 +31,6 @@
 #include "tools/object_detection/yolov3.cpp"
 // low_poly
 #include "tools/low_poly/low_poly.cpp"
-// blur
-#include "tools/img_blur/image_blur.cpp"
-// camera
-#include "tools/camera/camera.cpp"
-
-#pragma once
-static FlutterCamera flutterCamera;
-#pragma once
-static uchar **cameraEncodedOutput;
-
-using namespace cv;
-using namespace std;
 
 long long int get_now()
 {
@@ -195,95 +183,5 @@ extern "C"
             (*encodedOutput)[i] = buf[i];
         cout << "[cpp] done" << endl;
         return (int)buf.size();
-    }
-
-    FUNCTION_ATTRIBUTE
-    int read_image(char *inputImagePath, uchar **encodedOutput)
-    {
-        cv::Mat res = cv::imread(inputImagePath);
-        vector<uchar> buf;
-        cv::imencode(".png", res, buf); // save output into buf
-        *encodedOutput = (unsigned char *)malloc(buf.size());
-        for (int i = 0; i < buf.size(); i++)
-            (*encodedOutput)[i] = buf[i];
-        cout << "[cpp] done" << endl;
-        return (int)buf.size();
-    }
-
-    FUNCTION_ATTRIBUTE
-    void save_image(char *inputImagePath, int h, int w, uint8_t *rawBytes, int length)
-    {
-        fstream file;
-        file.open(inputImagePath, ios::out | ios::binary);
-        if (!file.is_open())
-        {
-            cout << "[cpp] "
-                 << "error" << endl;
-            return;
-        }
-        file.write((char *)rawBytes, length);
-        file.close();
-        cout << "[cpp] done" << endl;
-    }
-
-    FUNCTION_ATTRIBUTE
-    int image_blur(BlurStruct s, uchar **encodedOutput)
-    {
-        try
-        {
-            ImageBlur *blur = new ImageBlur();
-            blur->imageBlur(s.filename, s.method, s.kernelSize);
-            vector<uchar> buf;
-            cv::imencode(".png", blur->result, buf); // save output into buf
-            *encodedOutput = (unsigned char *)malloc(buf.size());
-            for (int i = 0; i < buf.size(); i++)
-                (*encodedOutput)[i] = buf[i];
-            cout << "[cpp] done" << endl;
-            return (int)buf.size();
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << e.what() << '\n';
-            return -1;
-        }
-    }
-
-    FUNCTION_ATTRIBUTE
-    void startCamera()
-    {
-        flutterCamera = FlutterCamera();
-        flutterCamera.startCamera();
-    }
-
-    FUNCTION_ATTRIBUTE
-    void stopCamera()
-    {
-        try
-        {
-            flutterCamera.stopCamera();
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << e.what() << '\n';
-        }
-    }
-
-    FUNCTION_ATTRIBUTE
-    void initCamera(uchar **encodedOutput){
-        cameraEncodedOutput = encodedOutput;
-        flutterCamera = FlutterCamera();
-        cout<<"[cpp] initial camera done"<<endl;
-    }
-
-    FUNCTION_ATTRIBUTE
-    void cameraCallback(void (*refreshUint8List)(int)){
-        flutterCamera = FlutterCamera();
-        cout<<"[cpp] camera on"<<endl;
-        flutterCamera.cameraCallback(refreshUint8List,cameraEncodedOutput);
-    }
-
-    FUNCTION_ATTRIBUTE
-    int getCameraImage(CameraStruct c){
-        return flutterCamera.getImage(cameraEncodedOutput,c.width,c.height,c.fps);
     }
 }
