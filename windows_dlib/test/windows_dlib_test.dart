@@ -7,9 +7,14 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 class MockWindowsDlibPlatform
     with MockPlatformInterfaceMixin
     implements WindowsDlibPlatform {
-
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
+
+  @override
+  Future dlibTest() {
+    // TODO: implement dlibTest
+    throw UnimplementedError();
+  }
 }
 
 void main() {

@@ -26,4 +26,6 @@ abstract class WindowsDlibPlatform extends PlatformInterface {
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
+
+  Future dlibTest();
 }

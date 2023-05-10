@@ -15,27 +15,44 @@ include_directories(${dlib_DIR})
 #   D:/dlib-19.24/build/dlib/Release
 # )
 
+# link_directories(
+#   D:/dlib-19.24/build_gpu/dlib/Debug
+# )
+
 link_directories(
-  D:/dlib-19.24/build/dlib/Debug
+  D:/dlib-19.24/build_gpu/dlib/Release
 )
+
+# link_directories(
+#   D:/dlib-19.24/build/dlib/dlib_build
+# )
 
 # This value is used when generating builds using this plugin, so it must
 # not be changed
 set(PLUGIN_NAME "windows_dlib_plugin")
 
-
 set(OpenCV_DIR D:/opencv/opencv/build)
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
-
-get_target_property(OPENCV_DLL_DEBUG opencv_world IMPORTED_LOCATION_DEBUG)
-get_target_property(OPENCV_DLL_RELEASE opencv_world IMPORTED_LOCATION_RELEASE)
 
 set(OPENCV_DLL
   $<$<CONFIG:Debug>:${OPENCV_DLL_DEBUG}>
   $<$<CONFIG:Profile>:${OPENCV_DLL_RELEASE}>
   $<$<CONFIG:Release>:${OPENCV_DLL_RELEASE}>
 )
+
+
+get_target_property(OPENCV_DLL_DEBUG opencv_world IMPORTED_LOCATION_DEBUG)
+get_target_property(OPENCV_DLL_RELEASE opencv_world IMPORTED_LOCATION_RELEASE)
+
+# set(dlib_RELEASE_DLL_NAME "dlib.lib")
+# set(dlib_DEBUG_DLL_NAME "dlibd.lib")
+
+# set(dlib_DLL
+#   $<$<CONFIG:Debug>:${dlib_DEBUG_DLL_NAME}>
+#   $<$<CONFIG:Profile>:${dlib_RELEASE_DLL_NAME}>
+#   $<$<CONFIG:Release>:${dlib_RELEASE_DLL_NAME}>
+# )
 # Any new source files that you add to the plugin should be added here.
 list(APPEND PLUGIN_SOURCES
   "windows_dlib_plugin.cpp"
@@ -76,5 +93,6 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE ${OpenCV_LIBS} flutter flutter_wrap
 set(windows_dlib_bundled_libraries
   ""
   "${_OpenCV_LIB_PATH}/${OpenCV_DLL_NAME}"
+  # "${_dlib_LIB_PATH}/${dlib_DLL_NAME}"
   PARENT_SCOPE
 )
