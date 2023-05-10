@@ -23,3 +23,13 @@ typedef CImsaveFunc = ffi.Void Function(
 // blur
 typedef CImageBlur = ffi.Int32 Function(ffi.Pointer<ImageBlurStruct> s,
     ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
+
+// sharpen from filepath
+typedef CSharpenFromPathFunc = ffi.Int32 Function(ffi.Pointer<Utf8> path,
+    ffi.Int method, ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
+
+// bilateral filter
+typedef CBilateralFilterFunc = ffi.Int32 Function(
+    ffi.Pointer<Utf8> path,
+    ffi.Pointer<BilateralFilterStruct> s,
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);

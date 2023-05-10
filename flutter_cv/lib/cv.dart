@@ -235,4 +235,44 @@ class FlutterCV {
     Uint8List encodedImBytes = cppPointer.asTypedList(length);
     return encodedImBytes;
   }
+
+  // sharpen
+  static Uint8List imageSharpen(int method,
+      {String? filename, Uint8List? origin}) {
+    assert(filename != null || origin != null);
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedImPtr = malloc.allocate(8);
+    final SharpenFromPathFunc func = _lib
+        .lookup<ffi.NativeFunction<CSharpenFromPathFunc>>("image_sharpen")
+        .asFunction();
+    int length = func(filename!.toNativeUtf8(), method, encodedImPtr);
+    ffi.Pointer<ffi.Uint8> cppPointer = encodedImPtr.elementAt(0).value;
+    Uint8List encodedImBytes = cppPointer.asTypedList(length);
+    return encodedImBytes;
+  }
+
+  // bilateral filter
+  static Uint8List bilateralFilter(
+      {int kernalSize = 3,
+      double color = 75,
+      double space = 75,
+      bool addWeight = true,
+      String? filename,
+      Uint8List? origin}) {
+    assert(filename != null || origin != null);
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedImPtr = malloc.allocate(8);
+
+    final BilateralFilterFunc func = _lib
+        .lookup<ffi.NativeFunction<CBilateralFilterFunc>>("bilateral_filter")
+        .asFunction();
+    ffi.Pointer<BilateralFilterStruct> inAddress =
+        calloc<BilateralFilterStruct>()
+          ..ref.kernalSize = kernalSize
+          ..ref.color = color
+          ..ref.space = space
+          ..ref.addWeight = addWeight;
+    final length = func(filename!.toNativeUtf8(), inAddress, encodedImPtr);
+    ffi.Pointer<ffi.Uint8> cppPointer = encodedImPtr.elementAt(0).value;
+    Uint8List encodedImBytes = cppPointer.asTypedList(length);
+    return encodedImBytes;
+  }
 }

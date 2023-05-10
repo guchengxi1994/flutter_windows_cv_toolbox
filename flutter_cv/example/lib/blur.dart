@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_init_to_null
 
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -30,6 +31,42 @@ class _BlurFormState extends State<BlurForm> {
     setState(() {});
   }
 
+  Future<void> imageSharpen4() async {
+    imagePath = await pickAnImage();
+
+    if (imagePath == null) {
+      return;
+    }
+
+    final r = FlutterCV.imageSharpen(4, filename: imagePath);
+    imageData = r;
+    setState(() {});
+  }
+
+  Future<void> imageSharpen8() async {
+    imagePath = await pickAnImage();
+
+    if (imagePath == null) {
+      return;
+    }
+
+    final r = FlutterCV.imageSharpen(8, filename: imagePath);
+    imageData = r;
+    setState(() {});
+  }
+
+  Future<void> bilateral() async {
+    imagePath = await pickAnImage();
+
+    if (imagePath == null) {
+      return;
+    }
+
+    final r = FlutterCV.bilateralFilter(filename: imagePath);
+    imageData = r;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,15 +80,45 @@ class _BlurFormState extends State<BlurForm> {
       ),
       body: Column(
         children: [
-          SizedBox(
-            width: 500,
-            height: 400,
-            child: imageData == null ? null : Image.memory(imageData!),
+          Row(
+            children: [
+              const Text("processed:"),
+              SizedBox(
+                width: 300,
+                height: 300,
+                child: imageData == null ? null : Image.memory(imageData!),
+              ),
+              const Text("origin:"),
+              SizedBox(
+                width: 300,
+                height: 300,
+                child: imagePath == null ? null : Image.file(File(imagePath!)),
+              )
+            ],
           ),
-          ElevatedButton(
-            onPressed: imageBlur1,
-            child: const Text('image blur'),
-          ),
+          Expanded(
+              child: Wrap(
+            spacing: 20,
+            runSpacing: 20,
+            children: [
+              ElevatedButton(
+                onPressed: imageBlur1,
+                child: const Text('image blur'),
+              ),
+              ElevatedButton(
+                onPressed: imageSharpen4,
+                child: const Text('image sharpen1'),
+              ),
+              ElevatedButton(
+                onPressed: imageSharpen8,
+                child: const Text('image sharpen2'),
+              ),
+              ElevatedButton(
+                onPressed: bilateral,
+                child: const Text('image bilateral filter'),
+              ),
+            ],
+          ))
         ],
       ),
     );

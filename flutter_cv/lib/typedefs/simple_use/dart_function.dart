@@ -18,3 +18,13 @@ typedef ImsaveFunc = void Function(ffi.Pointer<Utf8> path, int height,
 // blur
 typedef ImageBlur = int Function(ffi.Pointer<ImageBlurStruct> s,
     ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
+
+// sharpen from filepath
+typedef SharpenFromPathFunc = int Function(ffi.Pointer<Utf8> path, int method,
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
+
+// bilateral filter
+typedef BilateralFilterFunc = int Function(
+    ffi.Pointer<Utf8> path,
+    ffi.Pointer<BilateralFilterStruct> s,
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);

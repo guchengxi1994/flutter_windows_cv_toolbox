@@ -16,3 +16,17 @@ class ImageBlurStruct extends Struct {
   @Int32()
   external int kernelSize;
 }
+
+class BilateralFilterStruct extends Struct {
+  @Int32()
+  external int kernalSize;
+
+  @Bool()
+  external bool addWeight;
+
+  @Double()
+  external double color;
+
+  @Double()
+  external double space;
+}

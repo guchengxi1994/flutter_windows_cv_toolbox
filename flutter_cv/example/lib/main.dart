@@ -83,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     return const BlurForm();
                   }));
                 },
-                child: const Text("blur")),
+                child: const Text("blur & sharpen & filter")),
             ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(builder: (c) {

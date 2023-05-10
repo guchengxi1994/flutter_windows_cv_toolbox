@@ -25,12 +25,16 @@
 
 // blur
 #include "tools/img_blur/image_blur.cpp"
+// sharpen
+#include "tools/sharpen/sharpen.cpp"
+// filters
+#include "tools/filter/filter.cpp"
 
 using namespace cv;
 using namespace std;
 
 extern "C"
-{   
+{
     FUNCTION_ATTRIBUTE
     int32_t opencv_img_pixels(unsigned char *byteData, int32_t byteSize)
     {
@@ -85,6 +89,50 @@ extern "C"
             blur->imageBlur(s.filename, s.method, s.kernelSize);
             vector<uchar> buf;
             cv::imencode(".png", blur->result, buf); // save output into buf
+            *encodedOutput = (unsigned char *)malloc(buf.size());
+            for (int i = 0; i < buf.size(); i++)
+                (*encodedOutput)[i] = buf[i];
+            cout << "[cpp] done" << endl;
+            return (int)buf.size();
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << e.what() << '\n';
+            return -1;
+        }
+    }
+
+    FUNCTION_ATTRIBUTE
+    int image_sharpen(char *filename, int method, uchar **encodedOutput)
+    {
+        try
+        {
+            Sharpen *s = new Sharpen();
+            s->image_sharpen(filename, method);
+            vector<uchar> buf;
+            cv::imencode(".png", s->result, buf); // save output into buf
+            *encodedOutput = (unsigned char *)malloc(buf.size());
+            for (int i = 0; i < buf.size(); i++)
+                (*encodedOutput)[i] = buf[i];
+            cout << "[cpp] done" << endl;
+            return (int)buf.size();
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << e.what() << '\n';
+            return -1;
+        }
+    }
+
+    FUNCTION_ATTRIBUTE
+    int bilateral_filter(char *filename, BilateralFilterStruct s, uchar **encodedOutput)
+    {
+        try
+        {
+            Filter *f = new Filter();
+            f->bilateral(filename, s);
+            vector<uchar> buf;
+            cv::imencode(".png", f->result, buf); // save output into buf
             *encodedOutput = (unsigned char *)malloc(buf.size());
             for (int i = 0; i < buf.size(); i++)
                 (*encodedOutput)[i] = buf[i];
