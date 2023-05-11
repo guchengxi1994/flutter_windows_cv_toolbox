@@ -22,6 +22,18 @@ class MockWindowsDlibPlatform
     // TODO: implement facePointsDetection
     throw UnimplementedError();
   }
+
+  @override
+  Future<Uint8List?> bigEyes(String filename, int factor) {
+    // TODO: implement bigEyes
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Uint8List?> thinFace(String filename, int factor) {
+    // TODO: implement thinFace
+    throw UnimplementedError();
+  }
 }
 
 void main() {

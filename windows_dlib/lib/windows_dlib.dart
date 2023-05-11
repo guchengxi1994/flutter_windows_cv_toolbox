@@ -14,4 +14,12 @@ class WindowsDlib {
   Future<Uint8List?> facePointsDetection(String f) async {
     return WindowsDlibPlatform.instance.facePointsDetection(f);
   }
+
+  Future<Uint8List?> bigEyes(String f, int factor) async {
+    return WindowsDlibPlatform.instance.bigEyes(f, factor);
+  }
+
+  Future<Uint8List?> thinFace(String f, int factor) async {
+    return WindowsDlibPlatform.instance.thinFace(f, factor);
+  }
 }

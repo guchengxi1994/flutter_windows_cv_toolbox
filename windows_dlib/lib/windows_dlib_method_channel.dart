@@ -13,6 +13,16 @@ typedef CDetectFacePoints = ffi.Int32 Function(
 typedef DetectFacePoints = int Function(
     ffi.Pointer<Utf8> path, ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
 
+typedef CBigEyesFunc = ffi.Int32 Function(ffi.Pointer<Utf8> path,
+    ffi.Int32 factor, ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
+typedef BigEyesFunc = int Function(ffi.Pointer<Utf8> path, int factor,
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
+
+typedef CThinFaceFunc = ffi.Int32 Function(ffi.Pointer<Utf8> path,
+    ffi.Int32 factor, ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
+typedef ThinFaceFunc = int Function(ffi.Pointer<Utf8> path, int factor,
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedOutput);
+
 /// An implementation of [WindowsDlibPlatform] that uses method channels.
 class MethodChannelWindowsDlib extends WindowsDlibPlatform {
   /// The method channel used to interact with the native platform.
@@ -43,6 +53,35 @@ class MethodChannelWindowsDlib extends WindowsDlibPlatform {
         .lookup<ffi.NativeFunction<CDetectFacePoints>>("detect_face_points")
         .asFunction();
     final length = func(filename.toNativeUtf8(), encodedImPtr);
+    if (length == -1) {
+      return null;
+    }
+    ffi.Pointer<ffi.Uint8> cppPointer = encodedImPtr.elementAt(0).value;
+    Uint8List encodedImBytes = cppPointer.asTypedList(length);
+    return encodedImBytes;
+  }
+
+  @override
+  Future<Uint8List?> bigEyes(String filename, int factor) async {
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedImPtr = malloc.allocate(8);
+    final BigEyesFunc func =
+        _lib.lookup<ffi.NativeFunction<CBigEyesFunc>>("big_eyes").asFunction();
+    final length = func(filename.toNativeUtf8(), factor, encodedImPtr);
+    if (length == -1) {
+      return null;
+    }
+    ffi.Pointer<ffi.Uint8> cppPointer = encodedImPtr.elementAt(0).value;
+    Uint8List encodedImBytes = cppPointer.asTypedList(length);
+    return encodedImBytes;
+  }
+
+  @override
+  Future<Uint8List?> thinFace(String filename, int factor) async {
+    ffi.Pointer<ffi.Pointer<ffi.Uint8>> encodedImPtr = malloc.allocate(8);
+    final ThinFaceFunc func = _lib
+        .lookup<ffi.NativeFunction<CThinFaceFunc>>("thin_face")
+        .asFunction();
+    final length = func(filename.toNativeUtf8(), factor, encodedImPtr);
     if (length == -1) {
       return null;
     }

@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_init_to_null
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -60,14 +62,22 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: Column(
             children: [
-              result == null
-                  ? const SizedBox(
-                      width: 300,
-                      height: 300,
-                    )
-                  : SizedBox(
-                      child: Image.memory(result!),
-                    ),
+              Row(
+                children: [
+                  SizedBox(
+                    child: Image.file(File(
+                        r"C:\Users\xiaoshuyui\Desktop\不常用的东西\realface\47.png")),
+                  ),
+                  result == null
+                      ? const SizedBox(
+                          width: 300,
+                          height: 300,
+                        )
+                      : SizedBox(
+                          child: Image.memory(result!),
+                        ),
+                ],
+              ),
               Text('Running on: $_platformVersion\n'),
               ElevatedButton(
                   onPressed: () {
@@ -81,6 +91,22 @@ class _MyAppState extends State<MyApp> {
                     setState(() {});
                   },
                   child: const Text("test face points detection")),
+              ElevatedButton(
+                  onPressed: () async {
+                    result = await _windowsDlibPlugin.bigEyes(
+                        r"C:\Users\xiaoshuyui\Desktop\不常用的东西\realface\47.png",
+                        15);
+                    setState(() {});
+                  },
+                  child: const Text("big eyes")),
+              ElevatedButton(
+                  onPressed: () async {
+                    result = await _windowsDlibPlugin.thinFace(
+                        r"C:\Users\xiaoshuyui\Desktop\不常用的东西\realface\47.png",
+                        30);
+                    setState(() {});
+                  },
+                  child: const Text("thin face")),
             ],
           ),
         ),

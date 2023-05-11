@@ -1,4 +1,4 @@
-#pragma warning(disable : 4458 4459 4127 4456)
+#pragma warning(disable : 4458 4459 4127 4456 4189 4018)
 
 #include <opencv2/opencv.hpp>
 
@@ -34,6 +34,50 @@ extern "C"
         try
         {
             beautyImage->detectPoints(inputImagePath);
+            cv::Mat res = beautyImage->result;
+            std::vector<uchar> buf;
+            cv::imencode(".png", res, buf); // save output into buf
+            *encodedOutput = (unsigned char *)malloc(buf.size());
+            for (int i = 0; i < buf.size(); i++)
+                (*encodedOutput)[i] = buf[i];
+            std::cout << "[cpp] done" << std::endl;
+            return (int)buf.size();
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << e.what() << '\n';
+            return -1;
+        }
+    }
+
+    FUNCTION_ATTRIBUTE
+    int big_eyes(char *inputImagePath, int factor, uchar **encodedOutput)
+    {
+        try
+        {
+            beautyImage->bigEyes(inputImagePath, factor);
+            cv::Mat res = beautyImage->result;
+            std::vector<uchar> buf;
+            cv::imencode(".png", res, buf); // save output into buf
+            *encodedOutput = (unsigned char *)malloc(buf.size());
+            for (int i = 0; i < buf.size(); i++)
+                (*encodedOutput)[i] = buf[i];
+            std::cout << "[cpp] done" << std::endl;
+            return (int)buf.size();
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << e.what() << '\n';
+            return -1;
+        }
+    }
+
+    FUNCTION_ATTRIBUTE
+    int thin_face(char *inputImagePath, int factor, uchar **encodedOutput)
+    {
+        try
+        {
+            beautyImage->thinFace(inputImagePath, factor);
             cv::Mat res = beautyImage->result;
             std::vector<uchar> buf;
             cv::imencode(".png", res, buf); // save output into buf

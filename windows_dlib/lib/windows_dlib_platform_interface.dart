@@ -32,4 +32,8 @@ abstract class WindowsDlibPlatform extends PlatformInterface {
   Future dlibTest();
 
   Future<Uint8List?> facePointsDetection(String filename);
+
+  Future<Uint8List?> bigEyes(String filename, int factor);
+
+  Future<Uint8List?> thinFace(String filename, int factor);
 }
