@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'windows_dlib_method_channel.dart';
@@ -28,4 +30,6 @@ abstract class WindowsDlibPlatform extends PlatformInterface {
   }
 
   Future dlibTest();
+
+  Future<Uint8List?> facePointsDetection(String filename);
 }

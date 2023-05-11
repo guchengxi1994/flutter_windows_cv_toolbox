@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:windows_dlib/windows_dlib.dart';
 import 'package:windows_dlib/windows_dlib_platform_interface.dart';
@@ -12,7 +14,12 @@ class MockWindowsDlibPlatform
 
   @override
   Future dlibTest() {
-    // TODO: implement dlibTest
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Uint8List?> facePointsDetection(String filename) {
+    // TODO: implement facePointsDetection
     throw UnimplementedError();
   }
 }

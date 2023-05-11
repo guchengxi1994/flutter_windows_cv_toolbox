@@ -11,21 +11,26 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 set(dlib_DIR D:/dlib-19.24)
 include_directories(${dlib_DIR})
 
-# link_directories(
-#   D:/dlib-19.24/build/dlib/Release
-# )
+# get_cmake_property(_variableNames VARIABLES)
+# list (SORT _variableNames)
+# foreach (_variableName ${_variableNames})
+# message(STATUS "${_variableName}=${${_variableName}}")
+# endforeach()
+# set(CMAKE_BUILD_TYPE "Debug")
 
-# link_directories(
-#   D:/dlib-19.24/build_gpu/dlib/Debug
-# )
+set(CMAKE_BUILD_TYPE "Debug")
 
-link_directories(
-  D:/dlib-19.24/build_gpu/dlib/Release
-)
-
-# link_directories(
-#   D:/dlib-19.24/build/dlib/dlib_build
-# )
+if(CMAKE_BUILD_TYPE AND(CMAKE_BUILD_TYPE STREQUAL "Debug"))
+  message("DEBUG MODE")
+  link_directories(
+    D:/dlib-19.24/build_gpu/dlib/Debug
+  )
+else()
+  message("RELEASE MODE")
+  link_directories(
+    D:/dlib-19.24/build_gpu/dlib/Release
+  )
+endif()
 
 # This value is used when generating builds using this plugin, so it must
 # not be changed
@@ -41,18 +46,9 @@ set(OPENCV_DLL
   $<$<CONFIG:Release>:${OPENCV_DLL_RELEASE}>
 )
 
-
 get_target_property(OPENCV_DLL_DEBUG opencv_world IMPORTED_LOCATION_DEBUG)
 get_target_property(OPENCV_DLL_RELEASE opencv_world IMPORTED_LOCATION_RELEASE)
 
-# set(dlib_RELEASE_DLL_NAME "dlib.lib")
-# set(dlib_DEBUG_DLL_NAME "dlibd.lib")
-
-# set(dlib_DLL
-#   $<$<CONFIG:Debug>:${dlib_DEBUG_DLL_NAME}>
-#   $<$<CONFIG:Profile>:${dlib_RELEASE_DLL_NAME}>
-#   $<$<CONFIG:Release>:${dlib_RELEASE_DLL_NAME}>
-# )
 # Any new source files that you add to the plugin should be added here.
 list(APPEND PLUGIN_SOURCES
   "windows_dlib_plugin.cpp"
@@ -65,6 +61,7 @@ add_library(${PLUGIN_NAME} SHARED
   "include/windows_dlib/windows_dlib_plugin_c_api.h"
   "windows_dlib_plugin_c_api.cpp"
   "simple_use.cpp"
+  "face.cpp"
   ${PLUGIN_SOURCES}
 )
 
@@ -84,8 +81,7 @@ target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
 # dependencies here.
 target_include_directories(${PLUGIN_NAME} INTERFACE
   "${CMAKE_CURRENT_SOURCE_DIR}/include")
-target_link_libraries(${PLUGIN_NAME} PRIVATE ${OpenCV_LIBS} flutter flutter_wrapper_plugin dlib )
-
+target_link_libraries(${PLUGIN_NAME} PRIVATE ${OpenCV_LIBS} flutter flutter_wrapper_plugin dlib)
 
 # List of absolute paths to libraries that should be bundled with the plugin.
 # This list could contain prebuilt libraries, or libraries created by an
@@ -93,6 +89,14 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE ${OpenCV_LIBS} flutter flutter_wrap
 set(windows_dlib_bundled_libraries
   ""
   "${_OpenCV_LIB_PATH}/${OpenCV_DLL_NAME}"
-  # "${_dlib_LIB_PATH}/${dlib_DLL_NAME}"
   PARENT_SCOPE
 )
+
+# message("path: " ${PROJECT_BINARY_DIR}/release/dlib.dll)
+
+if(CMAKE_BUILD_TYPE AND(CMAKE_BUILD_TYPE STREQUAL "Debug"))
+  file(COPY "D:/dlib-19.24/build_gpu/dlib/Debug/dlib.lib" DESTINATION ${runner_BINARY_DIR}/Debug)
+  file(COPY "D:/dlib-19.24/build_gpu/dlib/Debug/dlib19.24.0_debug_64bit_msvc1933.pdb" DESTINATION ${runner_BINARY_DIR}/Debug)
+else()
+  file(COPY "D:/dlib-19.24/build_gpu/dlib/Release/dlib.lib" DESTINATION ${runner_BINARY_DIR}/release)
+endif()

@@ -50,7 +50,7 @@ extern "C"
 			// Load face detection and pose estimation models.
 			frontal_face_detector detector = get_frontal_face_detector();
 			shape_predictor pose_model;
-			deserialize("D:/github_repo/flutter_windows_opencv/windows_dlib/example/build/windows/runner/shape_predictor_68_face_landmarks.dat") >> pose_model;
+			deserialize("D:/github_repo/flutter_windows_opencv/windows_dlib/model/shape_predictor_68_face_landmarks.dat") >> pose_model;
 
 			// Grab and process frames until the main window is closed by the user.
 			while (cv::waitKey(30) != 27)

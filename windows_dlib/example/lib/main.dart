@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_init_to_null
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -18,6 +20,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   final _windowsDlibPlugin = WindowsDlib();
+  Uint8List? result = null;
 
   @override
   void initState() {
@@ -57,12 +60,27 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: Column(
             children: [
+              result == null
+                  ? const SizedBox(
+                      width: 300,
+                      height: 300,
+                    )
+                  : SizedBox(
+                      child: Image.memory(result!),
+                    ),
               Text('Running on: $_platformVersion\n'),
               ElevatedButton(
                   onPressed: () {
                     _windowsDlibPlugin.dlibTest();
                   },
-                  child: const Text("test"))
+                  child: const Text("test")),
+              ElevatedButton(
+                  onPressed: () async {
+                    result = await _windowsDlibPlugin.facePointsDetection(
+                        r"C:\Users\xiaoshuyui\Desktop\不常用的东西\realface\47.png");
+                    setState(() {});
+                  },
+                  child: const Text("test face points detection")),
             ],
           ),
         ),
