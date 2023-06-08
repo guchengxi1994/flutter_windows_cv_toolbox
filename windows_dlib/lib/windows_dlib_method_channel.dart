@@ -89,4 +89,18 @@ class MethodChannelWindowsDlib extends WindowsDlibPlatform {
     Uint8List encodedImBytes = cppPointer.asTypedList(length);
     return encodedImBytes;
   }
+
+  @override
+  Future lockScreen() async {
+    Func func =
+        _lib.lookup<ffi.NativeFunction<CFunc>>("lock_screen").asFunction();
+    func();
+  }
+
+  @override
+  Future sleepWindows() async {
+    Func func =
+        _lib.lookup<ffi.NativeFunction<CFunc>>("sleep_windows").asFunction();
+    func();
+  }
 }

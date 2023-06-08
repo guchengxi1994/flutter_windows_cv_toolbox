@@ -36,4 +36,8 @@ abstract class WindowsDlibPlatform extends PlatformInterface {
   Future<Uint8List?> bigEyes(String filename, int factor);
 
   Future<Uint8List?> thinFace(String filename, int factor);
+
+  Future lockScreen();
+
+  Future sleepWindows();
 }

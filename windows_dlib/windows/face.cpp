@@ -14,6 +14,10 @@
 #include <windows.h>
 #endif
 
+#define MONITOR_ON -1
+#define MONITOR_OFF 2
+#define MONITOR_STANBY 1
+
 #if defined(__GNUC__)
 // Attributes to prevent 'unused' function from being removed and to make it visible
 #define FUNCTION_ATTRIBUTE __attribute__((visibility("default"))) __attribute__((used))
@@ -92,5 +96,17 @@ extern "C"
             std::cerr << e.what() << '\n';
             return -1;
         }
+    }
+
+    FUNCTION_ATTRIBUTE
+    void lock_screen()
+    {
+        LockWorkStation();
+    }
+
+    FUNCTION_ATTRIBUTE
+    void sleep_windows()
+    {
+        PostMessage(HWND_BROADCAST, WM_SYSCOMMAND, SC_MONITORPOWER, MONITOR_OFF);
     }
 }

@@ -107,6 +107,16 @@ class _MyAppState extends State<MyApp> {
                     setState(() {});
                   },
                   child: const Text("thin face")),
+              ElevatedButton(
+                  onPressed: () {
+                    _windowsDlibPlugin.lockScreen();
+                  },
+                  child: const Text("lock screen")),
+              ElevatedButton(
+                  onPressed: () {
+                    _windowsDlibPlugin.sleepWindows();
+                  },
+                  child: const Text("sleep windows")),
             ],
           ),
         ),

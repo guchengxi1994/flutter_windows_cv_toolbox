@@ -34,6 +34,12 @@ class MockWindowsDlibPlatform
     // TODO: implement thinFace
     throw UnimplementedError();
   }
+
+  @override
+  Future lockScreen() {
+    // TODO: implement lockScreen
+    throw UnimplementedError();
+  }
 }
 
 void main() {

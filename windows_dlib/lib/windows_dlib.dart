@@ -22,4 +22,12 @@ class WindowsDlib {
   Future<Uint8List?> thinFace(String f, int factor) async {
     return WindowsDlibPlatform.instance.thinFace(f, factor);
   }
+
+  Future lockScreen() async {
+    return WindowsDlibPlatform.instance.lockScreen();
+  }
+
+  Future sleepWindows() async {
+    return WindowsDlibPlatform.instance.sleepWindows();
+  }
 }
